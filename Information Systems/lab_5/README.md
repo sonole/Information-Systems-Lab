@@ -1,19 +1,19 @@
-#----------------------------------------
-#INSERT COURSE
-#----------------------------------------
-type: post
-url : http://0.0.0.0:5000/insertcourse
-body: 
-{
-    "course_id":"DS512",
-    "name":"Information Systems",
-    "ects": 10
-}
-
-Response: "The course was added to the MongoDB"
-or "The course with the given ID already exists"
-
-
+#----------------------------------------<br/>
+#INSERT COURSE<br/>
+#----------------------------------------<br/>
+type: post<br/>
+url : http://0.0.0.0:5000/insertcourse<br/>
+body: <br/>
+{<br/>
+    "course_id":"DS512",<br/>
+    "name":"Information Systems",<br/>
+    "ects": 10<br/>
+}<br/>
+<br/>
+Response: "The course was added to the MongoDB"<br/>
+or "The course with the given ID already exists"<br/>
+<br/>
+<br/>
 #----------------------------------------
 #GET COURSE
 #----------------------------------------
