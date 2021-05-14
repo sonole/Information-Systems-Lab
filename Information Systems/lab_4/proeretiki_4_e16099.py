@@ -1,0 +1,153 @@
+from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
+from flask import Flask, request, jsonify, redirect, Response
+import json
+
+# Connect to our local MongoDB
+client = MongoClient('mongodb://localhost:27017/')
+
+# Choose InfoSys database
+db = client['InfoSys']
+students = db['Students']
+
+# Initiate Flask App
+app = Flask(__name__)
+
+# Insert Student
+# Create Operation
+@app.route('/insertstudent', methods=['POST'])
+def insert_student():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "name" in data or not "yearOfBirth" in data or not "email" in data:
+        return Response("Information incompleted",status=500,mimetype="application/json")
+    
+    if students.find({"email":data["email"]}).count() == 0 :
+        student = {"email": data['email'], "name": data['name'],  "yearOfBirth":data['yearOfBirth']}
+        # Add student to the 'students' collection
+        students.insert_one(student)
+        return Response("was added to the MongoDB",status=200,mimetype='application/json') 
+    else:
+        return Response("A user with the given email already exists",status=200,mimetype='application/json')
+
+# Read Operations
+# Get all students
+@app.route('/getallstudents', methods=['GET'])
+def get_all_students():
+    iterable = students.find({})
+    output = []
+    for student in iterable:
+        student['_id'] = None 
+        output.append(student)
+    return jsonify(output)
+
+# Get the number of all the students in the DB 
+@app.route('/getstudentcount', methods=['GET'])
+def get_students_count():
+    number_of_students = students.find({}).count()
+    return jsonify({"Number of students": number_of_students})
+
+# Find student by email
+@app.route('/getstudent/<string:email>', methods=['GET'])
+def get_student_by_email(email):
+    if email == None:
+        return Response("Bad request", status=500, mimetype='application/json')
+    student = students.find_one({"email":email})
+    if student !=None:
+        student = {'_id':str(student["_id"]),'name':student["name"],'email':student["email"], 'yearOfBirth':student["yearOfBirth"]}
+        return jsonify(student)
+    return Response('no student found',status=500,mimetype='application/json')
+
+
+
+#1 - Na briskei ta atoma pou exoun kapoia katageframeni katikia
+@app.route('/getstudentswithaddress', methods=['GET'])
+def get_students_with_address():
+    iterable = students.find( { 'address': { '$exists': 'true' } })
+    output = []
+    for student in iterable:
+        student['_id'] = None 
+        output.append(student)
+    return jsonify(output)
+
+#2 - Na vriskei tin address tous vash email
+@app.route('/getstudentaddress/<string:email>', methods=['GET'])
+def get_student_address_by_email(email):
+    if email == None:
+        return Response("Bad request", status=500, mimetype='application/json')
+    student = students.find_one( {'email':email, 'address': { '$exists': 'true' } })
+    if student !=None:
+            student = {'_id':str(student["_id"]),'name':student["name"],'email':student["email"], 'address':student["address"]}
+            return jsonify(student)
+    return Response('Wrong email OR student hasn\'t address',status=500,mimetype='application/json')
+
+#3 - Na vriskei ola ta atoma pou exoun address kai exoun genithi tin dekaetia tou 1980
+@app.route('/geteightiesaddress', methods=['GET'])
+def get_eighties_address():
+    iterable = students.find( { 'address': { '$exists': 'true' }, 'yearOfBirth' : { '$gte' :  1980, '$lte' : 1989 } } )
+    output = []
+    for student in iterable:
+        student['_id'] = None 
+        output.append(student)
+    return jsonify(output)
+
+#4 - Na epistrefete o arithmos twn atomwn pou exoun dilomenh address
+@app.route('/countaddress', methods=['GET'])
+def count_address():
+    counter = students.find( { 'address': { '$exists': 'true' } } ).count()
+    return jsonify({"Number of students with Address": counter})
+
+#5 - Na ylopoiithei ksana i synartisi insert_student() wste na mporei na ginei eisagwgi sti vasi dedomenwn kapoios neos
+#    foititis mazi me dedomena gia ti katoikia tou.
+@app.route('/insertstudentv2', methods=['POST'])
+def insert_student_v2():
+    # Request JSON data
+    data = None 
+    try:
+        data = json.loads(request.data)
+    except Exception as e:
+        return Response("bad json content",status=500,mimetype='application/json')
+    if data == None:
+        return Response("bad request",status=500,mimetype='application/json')
+    if not "name" in data or not "yearOfBirth" in data or not "email" in data:
+        return Response("Information incompleted",status=500,mimetype="application/json")
+    
+    if students.find({"email":data["email"]}).count() == 0 :
+        student =   { 
+                    "address": { 
+                        "city": data['city'], 
+                        "postcode":data['postcode'], 
+                        "street": data['street']   
+                    },
+                    "email": data['email'], 
+                    "name": data['name'], 
+                    "yearOfBirth":data['yearOfBirth']   
+                    }
+        # Add student to the 'students' collection
+        students.insert_one(student)
+        return Response("was added to the MongoDB",status=200,mimetype='application/json') 
+    else:
+        return Response("A user with the given email already exists",status=200,mimetype='application/json')
+
+#6 - Na epistrefetai o arithmos twn atomwn pou exoun gennithei mia sygkekrimeni xronia:
+#endpoint: /countYearOfBirth/<yearOfBirth>
+@app.route('/countyearofbirth/<int:year>', methods=['GET'])
+def count_year_of_birth(year):
+    if year == None:
+        return Response("Bad request", status=500, mimetype='application/json')
+
+    counter = students.find( { 'yearOfBirth':year } ).count()
+    if counter > 0:
+        return jsonify({"Number of students with Address": counter})
+    else:
+        return Response('Zero students found on given year',status=500,mimetype='application/json')
+
+# Run Flask App
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
