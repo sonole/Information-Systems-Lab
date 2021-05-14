@@ -20,9 +20,9 @@ endpoint: /countYearOfBirth/<yearOfBirth>
 
 We create our container:
 --------------------------------
-$ docker run -d -p 27017:27017 --name mongo_con mongo
-$ docker cp students.json mongo_con:/students.json
-$ docker exec -it mongo_con mongoimport --db=InfoSys --collection=Students --file=students.json
+$ docker run -d -p 27017:27017 --name mongo_con mongo<br/>
+$ docker cp students.json mongo_con:/students.json<br/>
+$ docker exec -it mongo_con mongoimport --db=InfoSys --collection=Students --file=students.json<br/>
 
 
 Then we run our flask app:
@@ -36,11 +36,11 @@ ex.<br/>
 type: post <br/>
 url : http://0.0.0.0:5000//insertstudentv2<br/>
 body: <br/>
-{<br/>
-"name":"Alexandros",<br/>
-"yearOfBirth":1998,<br/>
-"email":"alexpap2@gmail.com",<br/>
-"city": "Lowgap",<br/>
-"postcode": 18330,<br/>
-"street": "Jardine Place"  <br/>
-}
+&nbsp;{<br/>
+&nbsp;&nbsp;"name":"Alexandros",<br/>
+&nbsp;&nbsp;"yearOfBirth":1998,<br/>
+&nbsp;&nbsp;"email":"alexpap2@gmail.com",<br/>
+&nbsp;&nbsp;"city": "Lowgap",<br/>
+&nbsp;&nbsp;"postcode": 18330,<br/>
+&nbsp;&nbsp;"street": "Jardine Place"  <br/>
+&nbsp;}
