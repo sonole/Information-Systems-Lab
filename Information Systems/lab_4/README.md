@@ -36,11 +36,11 @@ ex.
 	type: post
 	url : http://0.0.0.0:5000//insertstudentv2
 	body: 
-		{
-			"name":"Alexandros",
-			"yearOfBirth":1998,
-			"email":"alexpap2@gmail.com",
-			"city": "Lowgap",
-			"postcode": 18330,
-			"street": "Jardine Place"  
-		}
+	{
+		"name":"Alexandros",
+		"yearOfBirth":1998,
+		"email":"alexpap2@gmail.com",
+		"city": "Lowgap",
+		"postcode": 18330,
+		"street": "Jardine Place"  
+	}
