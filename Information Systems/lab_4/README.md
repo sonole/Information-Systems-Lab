@@ -32,15 +32,15 @@ $ python proeretiki_4_e16099.py
 
 With postman we can do our POST/GET requests:
 --------------------------------
-ex.
-type: post 
-url : http://0.0.0.0:5000//insertstudentv2
-body: 
-{
-"name":"Alexandros",
-"yearOfBirth":1998,
-"email":"alexpap2@gmail.com",
-"city": "Lowgap",
-"postcode": 18330,
-"street": "Jardine Place"  
+ex.<br/>
+type: post <br/>
+url : http://0.0.0.0:5000//insertstudentv2<br/>
+body: <br/>
+{<br/>
+"name":"Alexandros",<br/>
+"yearOfBirth":1998,<br/>
+"email":"alexpap2@gmail.com",<br/>
+"city": "Lowgap",<br/>
+"postcode": 18330,<br/>
+"street": "Jardine Place"  <br/>
 }
